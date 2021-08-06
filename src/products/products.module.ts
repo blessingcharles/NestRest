@@ -11,8 +11,10 @@ import { ProductsService } from "./products.service";
         }])
     ],
     controllers:[ProductsController],
-    providers: [ProductsService]
+    providers: [ProductsService],
+    exports: [ProductsService]
 })
+
 export class ProductsModule {
 
 }

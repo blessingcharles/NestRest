@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
+import { response } from "express";
 import { Model } from "mongoose";
 import { resourceLimits } from "worker_threads";
 import { Product } from "./products.model";
 
 @Injectable()
 export class ProductsService{
-    private products : Product[] = []
 
     constructor(
         @InjectModel('Product') private readonly productModel: Model<Product>
@@ -26,11 +26,22 @@ export class ProductsService{
 
         const result = await newProduct.save()
 
-        return result.id
+        return result._id
     }
 
-    getAllProducts():any{
-        return this.products ;
+    async getAllProducts():Promise<any>{
+
+        const products = await this.productModel.find()
+
+        return [...products]
+    }
+
+    async deleteProduct(productId : string):Promise<any>{
+        const response = await this.productModel.deleteOne({_id  :productId})
+
+        console.log(response)
+
+        return response
     }
 
 }
