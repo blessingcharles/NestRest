@@ -9,7 +9,7 @@ export const ProductSchema = new mongoose.Schema({
     price : Number
 })
 
-export interface Product{
+export interface Product extends mongoose.Document{
     
         id:string 
         title : string 
