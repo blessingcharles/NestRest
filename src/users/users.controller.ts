@@ -39,8 +39,7 @@ export class UsersController {
         @Body() body : bookProductsDto,
         @Req() req : Request
     ){
-        console.log(req.user)
-        const results = await this.usersService.preBookProducts(body.productId , req.user)
-
+        return {msg : await this.usersService.preBookProducts(body.productId , req.user) }
     }
+    
 }
