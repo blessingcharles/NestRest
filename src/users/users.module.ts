@@ -23,7 +23,8 @@ import { AuthService } from 'src/auth/auth.service';
     AuthModule
   ],
   providers: [UsersService],
-  controllers: [UsersController]
+  controllers: [UsersController],
+  exports: [UsersService]
 })
 
 export class UsersModule {}

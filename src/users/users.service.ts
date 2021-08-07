@@ -79,15 +79,15 @@ export class UsersService {
 
     }
 
-    async preBookProducts(productId : string , user : {}) : Promise<String>{
+    async preBookProducts(productId : string , userId : string) : Promise<String>{
         try{
             const isProductExist = await this.productModel.findById({_id:productId})
-            
+
             if(!isProductExist){
                throw new HttpException("product doesnot exists",HttpStatus.NOT_FOUND)
             }
             
-            const identifyUser = await this.userModel.findById({_id:user["id"]})
+            const identifyUser = await this.userModel.findById({_id:userId})
             if(identifyUser){
                 identifyUser.bookedProducts.push(productId)
                 await identifyUser.save()
@@ -100,6 +100,15 @@ export class UsersService {
         catch(err){
            throw new HttpException(err.response || "something went wrong",
                                     err.status || HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async getUserDetails(userId : string) : Promise<User>{
+        try{
+            return await this.userModel.findById(userId)
+        }
+        catch(err){
+           throw new HttpException("something went wrong",HttpStatus.INTERNAL_SERVER_ERROR)  
         }
     }
 

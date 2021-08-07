@@ -27,15 +27,17 @@ dotenv.config()
   providers: [AppService],
 })
 
-export class AppModule implements NestModule{
-  configure(consumer: MiddlewareConsumer): void{
+export class AppModule {}
 
-    consumer
-    .apply(JwtAuthMiddleware)
-    .forRoutes(
-      {path:'users/bookProducts' , method : RequestMethod.POST}
-    )
+// export class AppModule implements NestModule{
+  // configure(consumer: MiddlewareConsumer): void{
 
-  }
+  //   consumer
+  //   .apply(JwtAuthMiddleware)
+  //   .forRoutes(
+  //     {path:'users/bookProducts' , method : RequestMethod.POST}
+  //   )
 
-}
+  // }
+
+// }
