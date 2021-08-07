@@ -2,15 +2,16 @@ import { HttpException, HttpStatus, Injectable, Post } from '@nestjs/common';
 import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { User } from './users.model';
-import * as bcrypt from 'bcryptjs'
-import * as jwt from 'jsonwebtoken'
 import { Product } from 'src/products/products.model';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectModel('User') private readonly userModel: Model<User>,
-        @InjectModel('Product') private readonly productModel: Model<Product>
+        @InjectModel('Product') private readonly productModel: Model<Product>,
+        private authService: AuthService
+
     ){}
 
     async login(
@@ -27,10 +28,9 @@ export class UsersService {
             }
             console.log(identifyUser)
             
-            if(await bcrypt.compare(password,identifyUser.password)){
-                const token = this.generateJWT({id : identifyUser._id})
+            if(await this.authService.comparePassword(password , identifyUser.password)){
+                const token =await this.authService.generateJWT({id : identifyUser._id})
                 return token
-
             }
             else{
                 throw new HttpException("invalid credentials",HttpStatus.UNAUTHORIZED)
@@ -57,7 +57,7 @@ export class UsersService {
                 throw new HttpException("username already taken",400)
             }
 
-            password = await this.encryptPassword(password)
+            password = await this.authService.encryptPassword(password)
             const user = new this.userModel({
                 username,
                 password ,
@@ -66,7 +66,7 @@ export class UsersService {
 
             const results = await user.save()
 
-            const token = await this.generateJWT({id:results._id})
+            const token = await this.authService.generateJWT({id:results._id})
 
             return [results , token]
 
@@ -102,32 +102,37 @@ export class UsersService {
                                     err.status || HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
-    // encrypt password
-    async encryptPassword(password : string) : Promise<string>{
 
-        let hashedPassword
-        try{
-            hashedPassword = await bcrypt.hash(password,12)
-        }catch(err){
-           throw new HttpException("something went wrong",HttpStatus.INTERNAL_SERVER_ERROR)
-        }
-        return hashedPassword
-    }   
+    // // encrypt password
+    // async encryptPassword(password : string) : Promise<string>{
 
-    // generate jwt token
-    async generateJWT(payload : Object){
+    //     let hashedPassword
+    //     try{
+    //         hashedPassword = await bcrypt.hash(password,12)
+    //     }catch(err){
+    //        throw new HttpException("something went wrong",HttpStatus.INTERNAL_SERVER_ERROR)
+    //     }
+    //     return hashedPassword
+    // }   
 
-        let token
-        try{
-            token = jwt.sign(payload,'secretkey',{expiresIn:'90d'})
-        }
-        catch(err){
-           throw new HttpException("something went wrong",HttpStatus.INTERNAL_SERVER_ERROR)
-        }
+    // // generate jwt token
+    // async generateJWT(payload : Object){
 
-        return token
-    }
+    //     let token
+    //     try{
+    //         token = jwt.sign(payload,'secretkey',{expiresIn:'90d'})
+    //     }
+    //     catch(err){
+    //        throw new HttpException("something went wrong",HttpStatus.INTERNAL_SERVER_ERROR)
+    //     }
 
+    //     return token
+    // }
 
+    // async comparePassword(hashedPassword , password) : Promise<boolean> {
+    //     const isEqual = await bcrypt.compare(hashedPassword , password)
+
+    //     return isEqual
+    // }
 
 }

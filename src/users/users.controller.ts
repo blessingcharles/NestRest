@@ -4,12 +4,14 @@ import { ProductsService } from 'src/products/products.service';
 import { UsersService } from 'src/users/users.service';
 import { bookProductsDto } from './dtos/book-products.dtos';
 import {CreateUsersDto} from './dtos/create-users.dtos'
+import { AuthService } from 'src/auth/auth.service';
 
 @Controller('users')
 export class UsersController {
     constructor(
         private readonly productsService : ProductsService ,
         private readonly usersService :    UsersService ,
+        private authService: AuthService
     ){}
 
     @Post('/login')
@@ -30,7 +32,7 @@ export class UsersController {
 
         return {
             token , 
-            userid : results._id
+            userid : results["_id"]
         }
     }
 
