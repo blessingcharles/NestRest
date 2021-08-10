@@ -17,6 +17,20 @@ export class Product extends Document{
 
 export const ProductSchema = SchemaFactory.createForClass(Product)
 
+ProductSchema.pre<Product>('save',function(next : Function ){
+    if(this.isNew){
+      console.log("it worked 1 ")
+    }
+    next()
+})
+
+ProductSchema.pre<Product>('save',function(next : Function ){
+  if(this.isNew){
+    this.createdAt = "winter product"
+  }
+  next()
+})
+
 // import * as mongoose from 'mongoose'
 
 // export const ProductSchema = new mongoose.Schema({

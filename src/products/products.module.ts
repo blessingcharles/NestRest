@@ -7,25 +7,10 @@ import { ProductsService } from "./products.service";
 
 @Module({
     imports : [
-        MongooseModule.forFeatureAsync([
+        MongooseModule.forFeature([
             {
-                name : Product.name,
-                useFactory : ()=>{
-                    const schema = ProductSchema
-                    
-                    
-                    schema.pre<Product>('save',async function (){
-                        const product = this 
-                        if(product.isNew){
-                            console.log("middleware hook called")
-                            product.createdAt = "summer product"
-                        }
-                    })
-
-
-                }
-            }
-        ])
+              name : "Product" , schema:ProductSchema
+            },])
     ],
     controllers:[ProductsController],
     providers: [ProductsService],
